@@ -5,35 +5,113 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title> </title>
 <style>
+  html, body { height: 100%; }
   body {
-    background: #ffffff;
-    color: #000000;
     margin: 0;
-    padding: 40px 20px;
+    padding: 40px 20px 80px 20px;
+    color: #d8d8d8;
+    /* ✏️ background: gambar + lapisan gelap tipis biar teks kebaca */
+    background:
+      linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
+      url('bg.png') center / cover no-repeat fixed #0a0a0a;
   }
-  .wrap {
-    max-width: 720px;
-    margin: 0 auto;
+  .wrap { max-width: 720px; margin: 0 auto; }
+  p { margin: 0 0 30px 0; word-break: break-word; }
+  /* pola: spasi dipertahankan persis seperti aslinya */
+  #pola { white-space: pre-wrap; }
+
+  /* hujan tersembunyi: tampil & perilaku persis teks biasa,
+     tidak ada efek hover / kursor khusus / warna beda */
+  .r { -webkit-user-select: none; user-select: none; }
+
+  /* bar kode (muncul di bawah layar setelah urutan benar) */
+  #bar {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: rgba(5,5,5,.92);
+    padding: 14px 16px;
   }
-  p {
-    margin: 0 0 30px 0;
-    word-break: break-word;
+  #bar input {
+    width: 100%; box-sizing: border-box;
+    background: #000; border: 1px solid #444; color: #d8d8d8;
+    font-size: 16px; padding: 10px; letter-spacing: 3px;
+    border-radius: 4px;
   }
-  /* paragraf pola: spasi di dalamnya harus dipertahankan persis */
-  #pola {
-    white-space: pre-wrap;
-  }
+  #bar input:focus { outline: none; border-color: #666; }
+  #barMsg { color: #777; font-size: 12px; margin: 8px 0 0 0; min-height: 14px; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- ✏️ PARAGRAF 1 — ganti teks di dalam <p> ini sesukamu -->
-<p>ᛦᚤᚢ᛬ᚾᛄᚢᛄᚱ᛬ᚴᚾᚤᚢ᛬ᚢᚼᚷᛏ᛬ᚢᛁᛚᛚ᛬ᚴᚤᛘᛄ᛬᛬ᛁ'ᛘ᛬ᛁᚢᛋᛏ᛬ᚤᚾᛚᛦ᛬ᚹᛁᚢᛄ᛬ᛦᚤᚢ᛬ᚷ᛬ᚼᛁᚾᛏ᛬ᛁᚠ᛬ᛦᚤᚢ᛬ᚢᚷᚾᛏ᛬ᛏᚤ᛬ᚠᛁᚾᚦ᛬ᚢᚼᚷᛏ᛬ᛁ᛬ᚴᚼᚷᛋᛄ</p>
+<!-- ✏️ PARAGRAF 1 -->
+<p>ᛦᚤᚢ᛬ᚾᛄᚢᛄᚱ᛬ᚴᚾᚤᚢ᛬ᚢᚼᚷᛏ᛬ᚢᛁᛚᛌ᛬ᚴᚤᛘᛄ᛬᛬ᛁ'ᛘ᛬ᛁᚢᛋᛏ᛬ᚤᚾᛚᛦ᛬ᚹᛁᚢᛄ᛬ᛦᚤᚢ᛬ᚷ᛬ᚼᛁᚾᛏ᛬ᛁᚠ᛬ᛦᚤᚢ᛬ᚢᚷᚾᛏ᛬ᛏᚤ᛬ᚠᛁᚾᚦ᛬ᚢᚼᚷᛏ᛬ᛁ᛬ᚴᚼᚷᛋᛄ</p>
 
-<!-- ✏️ PARAGRAF 2 — pola hujan. spasi jangan diubah/dihapus -->
-<p id="pola">🌧☐☐☐☐__☐   🌧☐☐_☐☐☐☐   🌧☐☐☐_☐_☐   🌧☐☐☐_☐_🌧   🌧☐☐☐_☐_☐   🌧☐☐___☐🌧   🌧☐☐__☐_☐   🌧_☐____🌧   🌧_☐☐☐__☐   🌧_☐____🌧   🌧☐☐☐☐__☐   🌧☐☐_☐☐☐☐   🌧☐☐☐_☐_☐   🌧☐☐☐_☐_🌧   🌧☐☐☐_☐_☐   🌧☐☐___☐🌧   🌧☐☐__☐_☐</p>
+<!-- ✏️ PARAGRAF 2 — pola hujan (emoji 🌧 ke-1 s/d 23 sudah ditandai) -->
+<p id="pola"><span class="r" data-i="1">🌧</span>☐☐☐☐__☐   <span class="r" data-i="2">🌧</span>☐☐_☐☐☐☐   <span class="r" data-i="3">🌧</span>☐☐☐_☐_☐   <span class="r" data-i="4">🌧</span>☐☐☐_☐_<span class="r" data-i="5">🌧</span>   <span class="r" data-i="6">🌧</span>☐☐☐_☐_☐   <span class="r" data-i="7">🌧</span>☐☐___☐<span class="r" data-i="8">🌧</span>   <span class="r" data-i="9">🌧</span>☐☐__☐_☐   <span class="r" data-i="10">🌧</span>_☐____<span class="r" data-i="11">🌧</span>   <span class="r" data-i="12">🌧</span>_☐☐☐__☐   <span class="r" data-i="13">🌧</span>_☐____<span class="r" data-i="14">🌧</span>   <span class="r" data-i="15">🌧</span>☐☐☐☐__☐   <span class="r" data-i="16">🌧</span>☐☐_☐☐☐☐   <span class="r" data-i="17">🌧</span>☐☐☐_☐_☐   <span class="r" data-i="18">🌧</span>☐☐☐_☐_<span class="r" data-i="19">🌧</span>   <span class="r" data-i="20">🌧</span>☐☐☐_☐_☐   <span class="r" data-i="21">🌧</span>☐☐___☐<span class="r" data-i="22">🌧</span>   <span class="r" data-i="23">🌧</span>☐☐__☐_☐</p>
+
+<!-- ✏️ PARAGRAF 3 — terkunci, muncul setelah kode benar -->
+<p id="p3" style="display:none">←→←←↑↓→↑←→→↑↓↑→←→↑←←↑←→↑↓←↓→←↑↓←↓↓→←↑→→←↓→←↑↓→↑↓↑←</p>
 
 </div>
+
+<!-- bar kode: muncul setelah urutan hujan benar -->
+<div id="bar">
+  <input id="code" type="password" inputmode="numeric" autocomplete="off" placeholder="········">
+  <p id="barMsg"></p>
+</div>
+
+<script>
+/* ==========================================================
+   ✏️ PENGATURAN — bagian yang boleh kamu ubah
+   ========================================================== */
+var PENGATURAN = {
+  urutanHujan: [10, 3, 9, 6, 20], // ← urutan emoji 🌧 (dihitung dari kiri atas)
+  kode: "93407595"                // ← kode untuk buka paragraf 3
+};
+/* ==========================================================
+   ⛔ KODE TEKNIS — jangan diubah ⛔
+   ========================================================== */
+(function(){
+  var langkah = 0;
+  var selesai = false;
+
+  document.querySelectorAll('.r').forEach(function(el){
+    el.addEventListener('click', function(){
+      if (selesai) return;
+      var i = parseInt(el.getAttribute('data-i'), 10);
+      if (i === PENGATURAN.urutanHujan[langkah]) {
+        langkah++;
+        if (langkah === PENGATURAN.urutanHujan.length) {
+          selesai = true;
+          // tanpa efek apa pun: cuma bar kode muncul
+          document.getElementById('bar').style.display = 'block';
+          document.getElementById('code').focus();
+        }
+      } else {
+        // salah pencet / salah urutan → ulang dari langkah 1
+        langkah = 0;
+        if (i === PENGATURAN.urutanHujan[0]) langkah = 1;
+      }
+    });
+  });
+
+  var codeInput = document.getElementById('code');
+  var barMsg = document.getElementById('barMsg');
+  codeInput.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter') return;
+    if (codeInput.value.trim() === PENGATURAN.kode) {
+      document.getElementById('bar').style.display = 'none';
+      var p3 = document.getElementById('p3');
+      p3.style.display = 'block';
+      p3.scrollIntoView({behavior:'smooth'});
+    } else {
+      barMsg.textContent = 'kode salah';
+      codeInput.value = '';
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
