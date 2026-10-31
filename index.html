@@ -78,6 +78,43 @@
     opacity: 0.5;
   }
 
+  /* terminal style (mirip versi lama) */
+  #terminal {
+    display: none;
+    margin: 30px 0;
+    border: 1px solid #333;
+    padding: 18px;
+    background: #050505;
+  }
+  #terminal.show {
+    display: block;
+  }
+  #terminal p {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #666;
+  }
+  #terminal input {
+    width: 100%;
+    background: #000;
+    border: 1px solid #444;
+    color: #c8c8c8;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 15px;
+    padding: 10px;
+    letter-spacing: 2px;
+  }
+  #terminal input:focus {
+    outline: none;
+    border-color: #777;
+  }
+  #termOut {
+    margin-top: 12px;
+    color: #888;
+    min-height: 20px;
+    font-size: 13px;
+  }
+
   #secret {
     display: none;
     margin-top: 10px;
@@ -113,6 +150,12 @@
 
 <p id="pattern"></p>
 
+<!-- terminal muncul setelah puzzle awan berhasil -->
+<div id="terminal">
+  <input id="code" type="password" autocomplete="off" placeholder="_ _ _ _ _ _ _ _" maxlength="16">
+  <p id="termOut"></p>
+</div>
+
 <p id="secret">←→←←↑↓→↑←→→↑↓↑→←→↑←←↑←→↑↓←↓→←↑↓←↓↓→←↑→→←↓→←↑↓→↑↓↑←</p>
 
 <script>
@@ -140,10 +183,11 @@
 /* (you cheating) */
 const _0x = [10, 3, 9, 6, 20]; // expected order – yes you found it
 let progress = 0;
-let solved = false;
+let cloudSolved = false;
+let codeSolved = false;
 
 document.getElementById("pattern").addEventListener("click", function(e) {
-  if (solved) return;
+  if (cloudSolved) return;
   const t = e.target;
   if (!t.classList.contains("cloud")) return;
 
@@ -153,13 +197,37 @@ document.getElementById("pattern").addEventListener("click", function(e) {
   if (num === _0x[progress]) {
     progress++;
     if (progress === _0x.length) {
-      solved = true;
-      document.getElementById("secret").classList.add("show");
-      document.getElementById("secret").scrollIntoView({ behavior: "smooth", block: "center" });
+      cloudSolved = true;
+      // tampilkan terminal input
+      const term = document.getElementById("terminal");
+      term.classList.add("show");
+      term.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(function(){ document.getElementById("code").focus(); }, 400);
     }
   } else {
     // any wrong click → full reset
     progress = 0;
+  }
+});
+
+// kode input (93407595)
+const codeInput = document.getElementById("code");
+const termOut = document.getElementById("termOut");
+
+codeInput.addEventListener("keydown", function(e) {
+  if (e.key !== "Enter" || codeSolved) return;
+  const val = codeInput.value.trim();
+  if (val === "93407595") {
+    codeSolved = true;
+    termOut.textContent = "> AKSES DIBERIKAN.";
+    codeInput.disabled = true;
+    setTimeout(function(){
+      document.getElementById("secret").classList.add("show");
+      document.getElementById("secret").scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 800);
+  } else {
+    termOut.textContent = "> KODE SALAH.";
+    codeInput.value = "";
   }
 });
 
