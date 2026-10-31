@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARSIP_07</title>
+<title>...</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
@@ -24,7 +24,6 @@
     animation: flicker 8s infinite;
   }
 
-  /* Video background full screen, loop */
   #bg-video {
     position: fixed;
     top: 0; left: 0;
@@ -35,7 +34,6 @@
     filter: brightness(0.65) contrast(1.2);
   }
 
-  /* Overlay gelap biar teks tetap terbaca */
   #overlay {
     position: fixed;
     inset: 0;
@@ -44,7 +42,6 @@
     pointer-events: none;
   }
 
-  /* CRT scanlines */
   #crt {
     position: fixed;
     inset: 0;
@@ -58,7 +55,6 @@
     mix-blend-mode: multiply;
   }
 
-  /* Vignette */
   #vignette {
     position: fixed;
     inset: 0;
@@ -71,6 +67,24 @@
     margin-bottom: 28px;
     word-break: break-word;
     text-shadow: 0 0 8px rgba(0,0,0,0.8);
+  }
+
+  .cloud {
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.15s;
+  }
+  .cloud:active {
+    opacity: 0.5;
+  }
+
+  #secret {
+    display: none;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+  #secret.show {
+    display: block;
   }
 
   @keyframes flicker {
@@ -93,51 +107,97 @@
 <div id="crt"></div>
 <div id="vignette"></div>
 
-<!-- TEKS (dari file yang kamu kirim) -->
+<!-- (you cheating) -->
+
 <p>= ᛦᚤᚢ᛬ᚾᛄᚢᛄᚱ᛬ᚴᚾᚤᚢ᛬ᚢᚼᚷᛏ᛬ᚢᛁᛚᛚ᛬ᚴᚤᛘᛄ᛬᛬ᛁ'ᛘ᛬ᛁᚢᛋᛏ᛬ᚤᚾᛚᛦ᛬ᚹᛁᚢᛄ᛬ᛦᚤᚢ᛬ᚷ᛬ᚼᛁᚾᛏ᛬ᛁᚠ᛬ᛦᚤᚢ᛬ᚢᚷᚾᛏ᛬ᛏᚤ᛬ᚠᛁᚾᚦ᛬ᚢᚼᚷᛏ᛬ᛁ᛬ᚴᚼᚷᛋᛄ</p>
 
-<p>🌧☐☐☐☐__☐   🌧☐☐_☐☐☐☐   🌧☐☐☐_☐_☐   🌧☐☐☐_☐_🌧   🌧☐☐☐_☐_☐   🌧☐☐___☐🌧   🌧☐☐__☐_☐   🌧_☐____🌧   🌧_☐☐☐__☐   🌧_☐____🌧   🌧☐☐☐☐__☐   🌧☐☐_☐☐☐☐   🌧☐☐☐_☐_☐   🌧☐☐☐_☐_🌧   🌧☐☐☐_☐_☐   🌧☐☐___☐🌧   🌧☐☐__☐_☐</p>
+<p id="pattern"></p>
+
+<p id="secret">←→←←↑↓→↑←→→↑↓↑→←→↑←←↑←→↑↓←↓→←↑↓←↓↓→←↑→→←↓→←↑↓→↑↓↑←</p>
 
 <script>
-  // ===== MUSIK: auto play + loop + susah dimatikan =====
-  const bgm = new Audio('Maebi_-_Trauma_(mp3.pm).mp3');
-  bgm.loop = true;
-  bgm.volume = 0.55;
+/*
+  (you cheating)
+  nice try looking at the source
+*/
 
-  function forcePlay() {
-    bgm.play().catch(() => {});
-  }
-
-  // Coba play segera
-  forcePlay();
-
-  // Paksa play lagi setiap kali user klik / touch / tekan tombol
-  ['click', 'touchstart', 'keydown', 'mousemove'].forEach(evt => {
-    document.addEventListener(evt, forcePlay, { passive: true });
-  });
-
-  // Kalau musik sempat di-pause, langsung play lagi
-  bgm.addEventListener('pause', () => {
-    setTimeout(forcePlay, 50);
-  });
-
-  // Jaga-jaga: cek tiap 2 detik, kalau tidak playing → play lagi
-  setInterval(() => {
-    if (bgm.paused) forcePlay();
-  }, 2000);
-
-  // ===== Proteksi dasar =====
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(e.key)) ||
-      (e.ctrlKey && ['u','U','s','S'].includes(e.key))
-    ) {
-      e.preventDefault();
-      return false;
+// pattern builder – clouds become clickable spans
+(function(){
+  const raw = "🌧☐☐☐☐__☐   🌧☐☐_☐☐☐☐   🌧☐☐☐_☐_☐   🌧☐☐☐_☐_🌧   🌧☐☐☐_☐_☐   🌧☐☐___☐🌧   🌧☐☐__☐_☐   🌧_☐____🌧   🌧_☐☐☐__☐   🌧_☐____🌧   🌧☐☐☐☐__☐   🌧☐☐_☐☐☐☐   🌧☐☐☐_☐_☐   🌧☐☐☐_☐_🌧   🌧☐☐☐_☐_☐   🌧☐☐___☐🌧   🌧☐☐__☐_☐";
+  let cloudIndex = 0;
+  let html = "";
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === "🌧") {
+      cloudIndex++;
+      html += '<span class="cloud" data-i="' + cloudIndex + '">🌧</span>';
+    } else {
+      html += raw[i];
     }
-  });
+  }
+  document.getElementById("pattern").innerHTML = html;
+})();
+
+/* (you cheating) */
+const _0x = [10, 3, 9, 6, 20]; // expected order – yes you found it
+let progress = 0;
+let solved = false;
+
+document.getElementById("pattern").addEventListener("click", function(e) {
+  if (solved) return;
+  const t = e.target;
+  if (!t.classList.contains("cloud")) return;
+
+  // silent – no sound
+  const num = parseInt(t.getAttribute("data-i"), 10);
+
+  if (num === _0x[progress]) {
+    progress++;
+    if (progress === _0x.length) {
+      solved = true;
+      document.getElementById("secret").classList.add("show");
+      document.getElementById("secret").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  } else {
+    // any wrong click → full reset
+    progress = 0;
+  }
+});
+
+// ===== MUSIK: auto play + loop + hard to stop =====
+const bgm = new Audio("Maebi_-_Trauma_(mp3.pm).mp3");
+bgm.loop = true;
+bgm.volume = 0.55;
+
+function forcePlay() {
+  bgm.play().catch(function(){});
+}
+
+forcePlay();
+
+["click", "touchstart", "keydown", "mousemove"].forEach(function(evt) {
+  document.addEventListener(evt, forcePlay, { passive: true });
+});
+
+bgm.addEventListener("pause", function() {
+  setTimeout(forcePlay, 50);
+});
+
+setInterval(function() {
+  if (bgm.paused) forcePlay();
+}, 2000);
+
+// basic protection
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+document.addEventListener("keydown", function(e) {
+  if (
+    e.key === "F12" ||
+    (e.ctrlKey && e.shiftKey && ["I","J","C","i","j","c"].includes(e.key)) ||
+    (e.ctrlKey && ["u","U","s","S"].includes(e.key))
+  ) {
+    e.preventDefault();
+    return false;
+  }
+});
 </script>
 
 </body>
